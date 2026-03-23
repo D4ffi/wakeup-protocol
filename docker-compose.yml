@@ -1,0 +1,33 @@
+services:
+  server:
+    build: .
+    ports:
+      - "${AUDIO_PORT:-8123}:8123"
+    env_file: .env
+    volumes:
+      - audio_data:/app/audio
+    networks:
+      - default
+      - openclaw-net
+    restart: unless-stopped
+
+  cron:
+    build: .
+    entrypoint: ["sh", "-c", "echo '${WAKEUP_MINUTE:-0} ${WAKEUP_HOUR:-7} * * * cd /app && python -m src.main >> /var/log/cron.log 2>&1' > /etc/crontab && crontab /etc/crontab && cron -f"]
+    env_file: .env
+    volumes:
+      - audio_data:/app/audio
+    networks:
+      - default
+      - openclaw-net
+    depends_on:
+      - server
+    restart: unless-stopped
+
+volumes:
+  audio_data:
+
+networks:
+  openclaw-net:
+    external: true
+    name: openclaw-tca0_default

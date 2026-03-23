@@ -1,0 +1,32 @@
+{# ── Template de mensaje de Buenos Dias ──
+   Variables disponibles:
+   - dt: datetime_info (hora, dia_semana, fecha_legible, es_fin_de_semana)
+   - clima: weather (temperatura, sensacion, condicion, humedad, ciudad)
+   - clickup: tasks (tareas[], total)
+   Secciones marcadas con ENRICH_* seran enriquecidas por OpenClaw (o Gemini como fallback).
+#}
+
+{{ ENRICH_SALUDO }}
+
+Hoy es {{ dt.fecha_legible }}.
+
+{% if clima %}
+En {{ clima.ciudad }} tenemos {{ clima.temperatura }} grados, con {{ clima.condicion }}. La sensacion termica es de {{ clima.sensacion }} grados.
+{% if clima.temperatura > 30 %}
+Hoy va a estar caluroso, no olvides hidratarte.
+{% elif clima.temperatura < 15 %}
+Esta fresquito hoy, llevar algo abrigador seria buena idea.
+{% endif %}
+{% endif %}
+
+{% if clickup and clickup.total > 0 %}
+Tienes {{ clickup.total }} tarea{{ 's' if clickup.total > 1 else '' }} para hoy en ClickUp:
+{% for t in clickup.tareas %}
+- {{ t.nombre }}{% if t.prioridad != 'sin prioridad' %} (prioridad {{ t.prioridad }}){% endif %}
+
+{% endfor %}
+{% elif clickup %}
+No tienes tareas pendientes en ClickUp para hoy. Dia tranquilo.
+{% endif %}
+
+{{ ENRICH_CIERRE }}
