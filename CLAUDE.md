@@ -25,13 +25,13 @@ Pipeline secuencial ejecutado por cron:
 
 ## Infraestructura
 
-- **wakey-wakey corre en VPS Hostinger** (srv1417253.hstgr.cloud / 93.188.160.200)
+- **wakey-wakey corre en VPS** (configurar `VPS_HOST` en `.env`)
   - Genera audio y lo sirve en URL publica
   - Comparte red Docker con OpenClaw (`openclaw-tca0_default`)
   - URL interna del enricher: `http://openclaw:40291`
 - **OpenClaw corre en la misma VPS**
-  - Contenedor: `openclaw-tca0-openclaw-1`, red Docker: `openclaw-tca0_default`
-  - Gateway HTTP en puerto 40291
+  - Contenedor en red Docker compartida
+  - Gateway HTTP accesible internamente
 - **Cliente local** (PC/dispositivo en casa) descarga el audio y:
   - Cast a Google Home via pychromecast (primario)
   - Reproduce por bocinas del PC (fallback)
@@ -77,12 +77,12 @@ curl -X POST http://localhost:8123/generate
 Ver `.env.example` para la lista completa. Las criticas son:
 - `OPENWEATHER_API_KEY` + `OPENWEATHER_CITY`
 - `CLICKUP_API_TOKEN`
-- `OPENCLAW_URL` + `OPENCLAW_TOKEN` (enricher principal: `http://srv1417253.hstgr.cloud:40291`)
+- `OPENCLAW_URL` + `OPENCLAW_TOKEN` (enricher principal, URL interna Docker)
 - `GEMINI_API_KEY` (enricher fallback)
 - `TTS_ENGINE` (elevenlabs | edge)
 - `ELEVENLABS_API_KEY` + `ELEVENLABS_VOICE_ID` (si TTS_ENGINE=elevenlabs)
 - `CHROMECAST_DEVICE` (nombre exacto del Google Home)
-- `AUDIO_BASE_URL` (URL publica de la VPS, ej: `http://srv1417253.hstgr.cloud:8123`)
+- `AUDIO_BASE_URL` (URL publica de la VPS donde se sirve el audio)
 
 ## Convenciones
 
