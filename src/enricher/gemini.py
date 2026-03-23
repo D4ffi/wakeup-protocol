@@ -54,19 +54,28 @@ async def enrich(skeleton: str) -> str:
             }
         ],
         "generationConfig": {
-            "temperature": 0.9,
+            "temperature": 0.7,
             "maxOutputTokens": 500,
         },
     }
 
     params = {"key": settings.gemini_api_key}
 
-    async with httpx.AsyncClient(timeout=20) as client:
+    async with httpx.AsyncClient(timeout=30) as client:
         resp = await client.post(GEMINI_URL, json=payload, params=params)
         resp.raise_for_status()
         data = resp.json()
 
-    text = data["candidates"][0]["content"]["parts"][0]["text"]
+    candidate = data["candidates"][0]
+    finish_reason = candidate.get("finishReason", "UNKNOWN")
+    text = candidate["content"]["parts"][0]["text"]
+
+    log.info("Gemini finish_reason=%s, response length=%d chars", finish_reason, len(text))
+    log.debug("Gemini raw response: %s", text)
+
+    if finish_reason == "MAX_TOKENS":
+        log.warning("Gemini trunco la respuesta por MAX_TOKENS")
+
     return text.strip()
 
 
