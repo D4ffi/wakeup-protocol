@@ -52,22 +52,22 @@ async def run_pipeline():
 
     log.info("Esqueleto generado:\n%s", skeleton)
 
-    # 3. Enriquecer: OpenClaw -> Gemini fallback -> texto plano
+    # 3. Enriquecer: Gemini -> OpenClaw fallback -> texto plano
     message = None
 
-    if settings.openclaw_url and settings.openclaw_token:
-        try:
-            message = await openclaw_enrich(skeleton)
-            log.info("Mensaje enriquecido con OpenClaw")
-        except Exception:
-            log.exception("Error con OpenClaw, intentando fallback Gemini")
-
-    if message is None and settings.gemini_api_key:
+    if settings.gemini_api_key:
         try:
             message = await gemini_enrich(skeleton)
-            log.info("Mensaje enriquecido con Gemini (fallback)")
+            log.info("Mensaje enriquecido con Gemini")
         except Exception:
-            log.exception("Error con Gemini, usando esqueleto plano")
+            log.exception("Error con Gemini, intentando fallback OpenClaw")
+
+    if message is None and settings.openclaw_url and settings.openclaw_token:
+        try:
+            message = await openclaw_enrich(skeleton)
+            log.info("Mensaje enriquecido con OpenClaw (fallback)")
+        except Exception:
+            log.exception("Error con OpenClaw, usando esqueleto plano")
 
     if message is None:
         message = _fallback(skeleton)
