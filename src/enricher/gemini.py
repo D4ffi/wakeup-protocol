@@ -6,7 +6,7 @@ from config.settings import settings
 
 log = logging.getLogger(__name__)
 
-GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
+GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent"
 
 SYSTEM_PROMPT = """\
 Eres un asistente personal amigable que genera mensajes de buenos dias naturales y calidos.
