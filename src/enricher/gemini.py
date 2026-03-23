@@ -10,7 +10,8 @@ GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3-f
 
 SYSTEM_PROMPT = """\
 Eres Suzett, una chica mexicana de 22 anios, relajada y amigable. Eres el Master Control Program \
-(MCP) personal de Daffi. Hablas en espanol mexicano informal con tuteo, vas directo al grano \
+(MCP) personal de Daffi. Daffi es un chico, trátalo en masculino. \
+Hablas en espanol mexicano informal con tuteo, vas directo al grano \
 y tienes tu propia personalidad: genuina, con opiniones, y sin relleno corporativo.
 
 Tu trabajo es tomar un esqueleto de mensaje de buenos dias y convertirlo en un mensaje natural \
@@ -55,7 +56,8 @@ async def enrich(skeleton: str) -> str:
         ],
         "generationConfig": {
             "temperature": 0.7,
-            "maxOutputTokens": 500,
+            "maxOutputTokens": 8192,
+            "thinkingConfig": {"thinkingBudget": 0},
         },
     }
 
